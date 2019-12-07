@@ -1,0 +1,105 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+<interface name="org.kde.kdeconnect.device">
+<property name="type" type="s" access="read"/>
+<property name="name" type="s" access="read"/>
+<property name="iconName" type="s" access="read"/>
+<property name="statusIconName" type="s" access="read"/>
+<property name="isReachable" type="b" access="read"/>
+<property name="isTrusted" type="b" access="read"/>
+<property name="supportedPlugins" type="as" access="read"/>
+<property name="hasPairingRequests" type="b" access="read"/>
+<signal name="pluginsChanged">
+</signal>
+<signal name="reachableChanged">
+<arg name="reachable" type="b" direction="out"/>
+</signal>
+<signal name="trustedChanged">
+<arg name="trusted" type="b" direction="out"/>
+</signal>
+<signal name="pairingError">
+<arg name="error" type="s" direction="out"/>
+</signal>
+<signal name="nameChanged">
+<arg name="name" type="s" direction="out"/>
+</signal>
+<signal name="hasPairingRequestsChanged">
+<arg name="hasPairingRequests" type="b" direction="out"/>
+</signal>
+<method name="requestPair">
+</method>
+<method name="unpair">
+</method>
+<method name="reloadPlugins">
+</method>
+<method name="acceptPairing">
+</method>
+<method name="rejectPairing">
+</method>
+<method name="hasPairingRequests">
+<arg type="b" direction="out"/>
+</method>
+<method name="encryptionInfo">
+<arg type="s" direction="out"/>
+</method>
+<method name="isTrusted">
+<arg type="b" direction="out"/>
+</method>
+<method name="availableLinks">
+<arg type="as" direction="out"/>
+</method>
+<method name="loadedPlugins">
+<arg type="as" direction="out"/>
+</method>
+<method name="hasPlugin">
+<arg type="b" direction="out"/>
+<arg name="name" type="s" direction="in"/>
+</method>
+<method name="pluginsConfigFile">
+<arg type="s" direction="out"/>
+</method>
+<method name="setPluginEnabled">
+<arg name="pluginName" type="s" direction="in"/>
+<arg name="enabled" type="b" direction="in"/>
+</method>
+<method name="isPluginEnabled">
+<arg type="b" direction="out"/>
+<arg name="pluginName" type="s" direction="in"/>
+</method>
+</interface>
+<interface name="org.kde.kdeconnect.device.battery">
+<signal name="stateChanged">
+<arg name="charging" type="b" direction="out"/>
+</signal>
+<signal name="chargeChanged">
+<arg name="charge" type="i" direction="out"/>
+</signal>
+<method name="charge">
+<arg type="i" direction="out"/>
+</method>
+<method name="isCharging">
+<arg type="b" direction="out"/>
+</method>
+</interface>
+<interface name="org.kde.kdeconnect.device.notifications">
+<signal name="notificationPosted">
+<arg name="publicId" type="s" direction="out"/>
+</signal>
+<signal name="notificationRemoved">
+<arg name="publicId" type="s" direction="out"/>
+</signal>
+<signal name="notificationUpdated">
+<arg name="publicId" type="s" direction="out"/>
+</signal>
+<signal name="allNotificationsRemoved">
+</signal>
+<method name="activeNotifications">
+<arg type="as" direction="out"/>
+</method>
+<method name="sendReply">
+<arg name="replyId" type="s" direction="in"/>
+<arg name="message" type="s" direction="in"/>
+</method>
+</interface>
+</node>

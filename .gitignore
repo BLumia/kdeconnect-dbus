@@ -1,0 +1,6 @@
+# IDE related
+.vscode/
+*.user
+
+# Builds
+build/
