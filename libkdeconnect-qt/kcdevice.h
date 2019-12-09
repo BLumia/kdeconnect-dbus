@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QDBusError>
 
+class KCNotification;
 class KCDevicePrivate;
 class KCDevice : public QObject
 {
@@ -55,6 +56,8 @@ public:
 
     // notifications (plugin name: kdeconnect_notifications)
     QStringList activeNotifications() const;
+    void sendReply(const QString &replyId, const QString &message);
+    KCNotification * createNotification(const QString &notificationId, QObject * parent = nullptr);
 
     // helper
     static QString pluginTypeToName(KCCommonPlugins pluginType);
@@ -68,9 +71,14 @@ signals:
     void reachableChanged(bool reachable);
     void trustedChanged(bool trusted);
 
+    // notifications
+    void allNotificationsRemoved();
+    void notificationPosted(const QString &publicId);
+    void notificationRemoved(const QString &publicId);
+    void notificationUpdated(const QString &publicId);
+
 protected:
-    explicit KCDevice(const QString & dbusPath, QObject * parent = nullptr);
-    explicit KCDevice(KCDevicePrivate &dd, const QString & dbusPath, QObject * parent = nullptr);
+    explicit KCDevice(const QString & deviceId, QObject * parent = nullptr);
 
 private:
     QScopedPointer<KCDevicePrivate> d_ptr;

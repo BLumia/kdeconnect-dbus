@@ -4,8 +4,6 @@
 #include "kcdbuscommon.h"
 #include "daemon_interface.h"
 
-const QString DaemonPath = "/modules/kdeconnect";
-const QString DeviceBasePath = "/modules/kdeconnect/devices/";
 using DaemonInterface = OrgKdeKdeconnectDaemonInterface;
 
 class KCManagerPrivate
@@ -31,7 +29,7 @@ KCManager::KCManager(QObject *parent)
 {
     // TODO: check if this dbus exist and do the following stuff once kdeconnect dbus is valid to use.
     // https://stackoverflow.com/questions/1423739/waiting-for-a-dbus-service-to-be-available-in-qt
-    DaemonInterface daemonIface(KCDBUS_SERVICE, DaemonPath, QDBusConnection::sessionBus());
+    DaemonInterface daemonIface(KCDBUS_SERVICE, KCDBUS_DAEMON_PATH, QDBusConnection::sessionBus());
 
     connect(&daemonIface, &DaemonInterface::announcedNameChanged, this, &KCManager::announcedNameChanged);
     connect(&daemonIface, &DaemonInterface::deviceAdded, this, &KCManager::deviceAdded);
@@ -47,7 +45,7 @@ KCManager::~KCManager()
 
 QStringList KCManager::devices(bool onlyReachable, bool onlyPaired)
 {
-    DaemonInterface daemonIface(KCDBUS_SERVICE, DaemonPath, QDBusConnection::sessionBus());
+    DaemonInterface daemonIface(KCDBUS_SERVICE, KCDBUS_DAEMON_PATH, QDBusConnection::sessionBus());
 
     QDBusPendingReply<QStringList> reply = daemonIface.devices(onlyReachable, onlyPaired);
     reply.waitForFinished();
@@ -57,5 +55,5 @@ QStringList KCManager::devices(bool onlyReachable, bool onlyPaired)
 
 KCDevice * KCManager::createDevice(const QString &deviceId, QObject * parent)
 {
-    return new KCDevice(DeviceBasePath + deviceId, parent);
+    return new KCDevice(deviceId, parent);
 }

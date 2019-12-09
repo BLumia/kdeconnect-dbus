@@ -8,10 +8,12 @@ PROPERTIES
 # https://doc.qt.io/qt-5/qtdbus-cmake-qt5-add-dbus-interface.html
 qt5_add_dbus_interface (KCLIB_DBUS_GEN_FILES org.kde.kdeconnect.daemon.xml daemon_interface)
 qt5_add_dbus_interface (KCLIB_DBUS_GEN_FILES org.kde.kdeconnect.device.xml device_interface)
+qt5_add_dbus_interface (KCLIB_DBUS_GEN_FILES org.kde.kdeconnect.device.notifications.notification.xml notification_interface)
 
 set (KCLIB_PUBLIC_HEADER_FILES
     kcmanager.h
     kcdevice.h
+    kcnotification.h
 )
 
 set (KCLIB_PRIVATE_HEADER_FILES
@@ -21,6 +23,7 @@ set (KCLIB_PRIVATE_HEADER_FILES
 set (KCLIB_PRIVATE_CPP_FILES
     kcmanager.cpp
     kcdevice.cpp
+    kcnotification.cpp
 )
 
 add_library (kdeconnect-qt

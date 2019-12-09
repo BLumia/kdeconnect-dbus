@@ -3,6 +3,7 @@
 
 #include "kcmanager.h"
 #include "kcdevice.h"
+#include "kcnotification.h"
 
 class KCDeviceListTest : public QObject {
     Q_OBJECT
@@ -18,6 +19,13 @@ private Q_SLOTS:
             auto dev = KCManager::createDevice(devId);
             qDebug() << dev->name() << dev->isValid() << dev->hasPlugin(KCDevice::KCBattery) << dev->charge();
             qDebug() << dev->hasPlugin(KCDevice::KCNotifications) << dev->activeNotifications();
+            if (dev->hasPlugin(KCDevice::KCNotifications)) {
+                QStringList notifications = dev->activeNotifications();
+                for (const QString & notificationId : notifications) {
+                    auto n = dev->createNotification(notificationId);
+                    qDebug() << n->appName() << n->title() << n->text();
+                }
+            }
         }
     }
 };

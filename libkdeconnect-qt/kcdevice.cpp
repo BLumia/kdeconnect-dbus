@@ -1,17 +1,24 @@
 #include "kcdevice.h"
+#include "kcnotification.h"
 
 #include "kcdbuscommon.h"
 #include "device_interface.h"
+#include "notification_interface.h"
+
+#define PROXY_SIGNAL_QQ(sender, senderClassName, receiverClassName, signalMethodName) \
+    qq->connect(sender, &senderClassName::signalMethodName, qq, &receiverClassName::signalMethodName)
 
 using DeviceInterface = OrgKdeKdeconnectDeviceInterface;
 using DeviceBatteryInterface = OrgKdeKdeconnectDeviceBatteryInterface;
 using DeviceNotificationsInterface = OrgKdeKdeconnectDeviceNotificationsInterface;
+using SingleNotificationInterface = OrgKdeKdeconnectDeviceNotificationsNotificationInterface;
 
 class KCDevicePrivate
 {
 public:
-    KCDevicePrivate(const QString & dbusPath, KCDevice *qq);
+    KCDevicePrivate(const QString & deviceId, KCDevice *qq);
 
+    QString deviceId;
     QString dbusPath;
     DeviceInterface * dbus;
     DeviceBatteryInterface * batteryDBus;
@@ -23,19 +30,26 @@ private:
     Q_DECLARE_PUBLIC(KCDevice)
 };
 
-KCDevicePrivate::KCDevicePrivate(const QString &dbusPath, KCDevice *qq)
-    : dbusPath(dbusPath)
+KCDevicePrivate::KCDevicePrivate(const QString &deviceId, KCDevice *qq)
+    : deviceId(deviceId)
+    , dbusPath(QString(KCDBUS_DEVICE_BASE_PATH).arg(deviceId))
     , dbus(new DeviceInterface(KCDBUS_SERVICE, dbusPath, QDBusConnection::sessionBus(), qq))
     , batteryDBus(new DeviceBatteryInterface(KCDBUS_SERVICE, dbusPath, QDBusConnection::sessionBus(), qq))
     , notificationDBus(new DeviceNotificationsInterface(KCDBUS_SERVICE, dbusPath, QDBusConnection::sessionBus(), qq))
     , q_ptr(qq)
 {
-    qq->connect(dbus, &DeviceInterface::hasPairingRequestsChanged, qq, &KCDevice::hasPairingRequestsChanged);
-    qq->connect(dbus, &DeviceInterface::nameChanged, qq, &KCDevice::nameChanged);
-    qq->connect(dbus, &DeviceInterface::pairingError, qq, &KCDevice::pairingError);
-    qq->connect(dbus, &DeviceInterface::pluginsChanged, qq, &KCDevice::pluginsChanged);
-    qq->connect(dbus, &DeviceInterface::reachableChanged, qq, &KCDevice::reachableChanged);
-    qq->connect(dbus, &DeviceInterface::trustedChanged, qq, &KCDevice::trustedChanged);
+    PROXY_SIGNAL_QQ(dbus, DeviceInterface, KCDevice, hasPairingRequestsChanged);
+    PROXY_SIGNAL_QQ(dbus, DeviceInterface, KCDevice, nameChanged);
+    PROXY_SIGNAL_QQ(dbus, DeviceInterface, KCDevice, pairingError);
+    PROXY_SIGNAL_QQ(dbus, DeviceInterface, KCDevice, pluginsChanged);
+    PROXY_SIGNAL_QQ(dbus, DeviceInterface, KCDevice, reachableChanged);
+    PROXY_SIGNAL_QQ(dbus, DeviceInterface, KCDevice, trustedChanged);
+
+    // notifications
+    PROXY_SIGNAL_QQ(notificationDBus, DeviceNotificationsInterface, KCDevice, allNotificationsRemoved);
+    PROXY_SIGNAL_QQ(notificationDBus, DeviceNotificationsInterface, KCDevice, notificationPosted);
+    PROXY_SIGNAL_QQ(notificationDBus, DeviceNotificationsInterface, KCDevice, notificationRemoved);
+    PROXY_SIGNAL_QQ(notificationDBus, DeviceNotificationsInterface, KCDevice, notificationUpdated);
 }
 
 KCDevice::~KCDevice()
@@ -172,6 +186,25 @@ QStringList KCDevice::activeNotifications() const
     return {};
 }
 
+void KCDevice::sendReply(const QString &replyId, const QString &message)
+{
+    Q_D(const KCDevice);
+
+    if (hasPlugin(KCNotifications)) {
+        QDBusPendingReply<QStringList> reply = d->notificationDBus->sendReply(replyId, message);
+        reply.waitForFinished();
+
+        return;
+    }
+}
+
+KCNotification *KCDevice::createNotification(const QString &notificationId, QObject *parent)
+{
+    Q_D(KCDevice);
+
+    return new KCNotification(d->deviceId, notificationId, parent);
+}
+
 QString KCDevice::pluginTypeToName(KCDevice::KCCommonPlugins pluginType)
 {
     switch (pluginType) {
@@ -202,6 +235,8 @@ QString KCDevice::pluginTypeToName(KCDevice::KCCommonPlugins pluginType)
     case KCTelephony:
         return QStringLiteral("kdeconnect_telephony");
     }
+
+    return QString();
 }
 
 KCDevice::KCCommonPlugins KCDevice::pluginNameToType(QString pluginName)
@@ -224,9 +259,9 @@ KCDevice::KCCommonPlugins KCDevice::pluginNameToType(QString pluginName)
     return pluginNameTypeMap.value(pluginName, Unknown);
 }
 
-KCDevice::KCDevice(const QString &dbusPath, QObject *parent)
+KCDevice::KCDevice(const QString &deviceId, QObject *parent)
     : QObject (parent)
-    , d_ptr(new KCDevicePrivate(dbusPath, this))
+    , d_ptr(new KCDevicePrivate(deviceId, this))
 {
 
 }
