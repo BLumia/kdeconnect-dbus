@@ -45,12 +45,22 @@ KCDevicePrivate::KCDevicePrivate(const QString &deviceId, KCDevice *qq)
     PROXY_SIGNAL_QQ(dbus, DeviceInterface, KCDevice, reachableChanged);
     PROXY_SIGNAL_QQ(dbus, DeviceInterface, KCDevice, trustedChanged);
 
+    PROXY_SIGNAL_QQ(batteryDBus, DeviceBatteryInterface, KCDevice, chargeChanged);
+
     // notifications
     PROXY_SIGNAL_QQ(notificationDBus, DeviceNotificationsInterface, KCDevice, allNotificationsRemoved);
     PROXY_SIGNAL_QQ(notificationDBus, DeviceNotificationsInterface, KCDevice, notificationPosted);
     PROXY_SIGNAL_QQ(notificationDBus, DeviceNotificationsInterface, KCDevice, notificationRemoved);
     PROXY_SIGNAL_QQ(notificationDBus, DeviceNotificationsInterface, KCDevice, notificationUpdated);
 }
+
+KCDevice::KCDevice(const QString &deviceId, QObject *parent)
+    : QObject (parent)
+    , d_ptr(new KCDevicePrivate(deviceId, this))
+{
+
+}
+
 
 KCDevice::~KCDevice()
 {
@@ -257,11 +267,4 @@ KCDevice::KCCommonPlugins KCDevice::pluginNameToType(QString pluginName)
     };
 
     return pluginNameTypeMap.value(pluginName, Unknown);
-}
-
-KCDevice::KCDevice(const QString &deviceId, QObject *parent)
-    : QObject (parent)
-    , d_ptr(new KCDevicePrivate(deviceId, this))
-{
-
 }

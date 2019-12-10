@@ -31,6 +31,7 @@ public:
     };
     Q_ENUM(KCCommonPlugins)
 
+    explicit KCDevice(const QString & deviceId, QObject * parent = nullptr);
     ~KCDevice();
 
     bool isValid() const;
@@ -71,6 +72,10 @@ signals:
     void reachableChanged(bool reachable);
     void trustedChanged(bool trusted);
 
+    // battery
+    void chargeChanged(int charge);
+    void stateChanged(bool charging);
+
     // notifications
     void allNotificationsRemoved();
     void notificationPosted(const QString &publicId);
@@ -78,7 +83,6 @@ signals:
     void notificationUpdated(const QString &publicId);
 
 protected:
-    explicit KCDevice(const QString & deviceId, QObject * parent = nullptr);
 
 private:
     QScopedPointer<KCDevicePrivate> d_ptr;
