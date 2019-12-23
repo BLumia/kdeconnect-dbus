@@ -2,18 +2,13 @@
 
 #include <kcmanager.h>
 
-#include "devicewidget.h"
+#include "devicemanager.h"
 
 int main(int argc, char * argv[])
 {
     QApplication app(argc, argv);
 
-    QStringList devList = KCManager::devices(true, true);
-
-    for (const QString & s : devList) {
-        DeviceWidget * dv = new DeviceWidget(s);
-        dv->show();
-    }
+    DeviceManager devMan;
 
     return app.exec();
 }

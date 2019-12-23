@@ -2,6 +2,12 @@
 
 #include <QStyledItemDelegate>
 
+enum NotificationItemDataRole {
+    NotificationIdRole = Qt::UserRole + 1,
+    NotificationTitleRole = Qt::UserRole + 2,
+    ApplicationNameRole = Qt::UserRole + 3
+};
+
 class NotificationItemDelegate : public QStyledItemDelegate
 {
 public:

@@ -23,7 +23,7 @@ private Q_SLOTS:
                 QStringList notifications = dev->activeNotifications();
                 for (const QString & notificationId : notifications) {
                     auto n = dev->createNotification(notificationId);
-                    qDebug() << n->appName() << n->title() << n->text();
+                    qDebug() << n->appName() << n->title() << n->text() << n->notificationId();
                 }
             }
         }

@@ -46,6 +46,7 @@ KCDevicePrivate::KCDevicePrivate(const QString &deviceId, KCDevice *qq)
     PROXY_SIGNAL_QQ(dbus, DeviceInterface, KCDevice, trustedChanged);
 
     PROXY_SIGNAL_QQ(batteryDBus, DeviceBatteryInterface, KCDevice, chargeChanged);
+    qq->connect(batteryDBus, &DeviceBatteryInterface::stateChanged, qq, &KCDevice::chargeStateChanged);
 
     // notifications
     PROXY_SIGNAL_QQ(notificationDBus, DeviceNotificationsInterface, KCDevice, allNotificationsRemoved);

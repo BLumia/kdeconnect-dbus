@@ -9,9 +9,11 @@ class QStandardItemModel;
 class QHBoxLayout;
 class QVBoxLayout;
 class QListView;
+class QStandardItem;
 QT_END_NAMESPACE
 
 class KCDevice;
+class BatteryWidget;
 class NotificationModel;
 class DeviceWidget : public QWidget
 {
@@ -24,13 +26,19 @@ signals:
 public slots:
     void fetchAllNotifications();
     void updateBatteryWidget();
+    void allNotificationsRemoved();
+    void notificationPosted(const QString &publicId);
+    void notificationRemoved(const QString &publicId);
+    void notificationUpdated(const QString &publicId);
 
 private:
+    QStandardItem * createNotificationItem(const QString & notificationId);
+
     KCDevice * m_kcdevice;
 
     QStandardItemModel * m_notificationModel;
 
-    QLabel * m_batteryWidget;
+    BatteryWidget * m_batteryWidget;
     QListView * m_notificationListView;
     QHBoxLayout * m_statusBarLayout;
     QVBoxLayout * m_mainLayout;

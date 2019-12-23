@@ -74,7 +74,7 @@ signals:
 
     // battery
     void chargeChanged(int charge);
-    void stateChanged(bool charging);
+    void chargeStateChanged(bool charging);
 
     // notifications
     void allNotificationsRemoved();
