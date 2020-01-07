@@ -155,6 +155,26 @@ bool KCDevice::hasPlugin(KCDevice::KCCommonPlugins pluginType) const
     return hasPlugin(pluginTypeToName(pluginType));
 }
 
+bool KCDevice::requestPair() const
+{
+    Q_D(const KCDevice);
+
+    QDBusPendingReply<void> reply = d->dbus->requestPair();
+    reply.waitForFinished();
+
+    return true;
+}
+
+bool KCDevice::unpair() const
+{
+    Q_D(const KCDevice);
+
+    QDBusPendingReply<void> reply = d->dbus->unpair();
+    reply.waitForFinished();
+
+    return true;
+}
+
 int KCDevice::charge() const
 {
     Q_D(const KCDevice);

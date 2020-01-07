@@ -50,6 +50,8 @@ public:
     void rejectPairing() const;
     bool hasPlugin(const QString & pluginName) const;
     bool hasPlugin(KCCommonPlugins pluginType) const;
+    bool requestPair() const;
+    bool unpair() const;
 
     // battery (plugin name: kdeconnect_battery)
     int charge() const;
