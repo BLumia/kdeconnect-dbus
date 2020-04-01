@@ -21,5 +21,5 @@ endif ()
 
 if (BUILD_DDE_DOCK_PLUGIN)
     find_package (Qt5 ${QT_MINIMUM_VERSION} CONFIG REQUIRED Widgets)
-    add_subdirectory (kdeconnect-dde)
+    add_subdirectory (kdeconnect-qt)
 endif ()
